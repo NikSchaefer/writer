@@ -2,8 +2,8 @@ import { sohne } from "./fonts";
 import "./globals.css";
 
 export const metadata = {
-  title: "New Writer",
-  description: "A modern writing application",
+  title: "Writer",
+  description: "Write something interesting",
 };
 
 export default function RootLayout({
