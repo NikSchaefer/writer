@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useWriter } from "@/contexts/WriterContext";
 import { Textarea } from "./ui/textarea";
+import { Footer } from "./Footer";
 
 export function Writer() {
   const { state, updateText } = useWriter();
@@ -84,6 +85,44 @@ export function Writer() {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     const textarea = e.currentTarget;
 
+    // Handle Tab key for indentation
+    if (e.key === "Tab") {
+      e.preventDefault();
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const value = textarea.value;
+
+      // If there's a selection, indent all selected lines
+      if (start !== end) {
+        const selectedText = value.substring(start, end);
+        const lines = selectedText.split("\n");
+        const indentedText = lines.map((line) => "  " + line).join("\n");
+        const newValue =
+          value.substring(0, start) + indentedText + value.substring(end);
+        updateText(newValue);
+
+        // Set cursor position after the indented text
+        setTimeout(() => {
+          textarea.selectionStart = start + indentedText.length;
+          textarea.selectionEnd = start + indentedText.length;
+          updateCursorPosition(textarea);
+        }, 0);
+      } else {
+        // If no selection, just insert two spaces at cursor position
+        const newValue =
+          value.substring(0, start) + "  " + value.substring(end);
+        updateText(newValue);
+
+        // Set cursor position after the inserted spaces
+        setTimeout(() => {
+          textarea.selectionStart = start + 2;
+          textarea.selectionEnd = start + 2;
+          updateCursorPosition(textarea);
+        }, 0);
+      }
+      return;
+    }
+
     // Handle arrow keys
     if (
       e.key === "ArrowLeft" ||
@@ -102,6 +141,13 @@ export function Writer() {
     const textarea = e.currentTarget;
     updateCursorPosition(textarea);
   };
+
+  // Focus textarea on mount
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
 
   return (
     <div
@@ -128,7 +174,7 @@ export function Writer() {
               whiteSpace: "pre-wrap",
               minHeight: "60vh",
             }}
-            placeholder="Start writing..."
+            placeholder="Write..."
           />
           <div
             className="absolute w-0.5 animate-pulse"
@@ -138,13 +184,18 @@ export function Writer() {
               width: `${state.settings.cursorWidth}px`,
               left: `${cursorLeft}px`,
               top: `${cursorTop}px`,
-              transition: `all ${state.settings.cursorSpeed}s ease-out`,
+              transition: `left 0.15s ease-out, top 0.15s ease-out, opacity 0.15s ease-out`,
               pointerEvents: "none",
               opacity: isFocused ? 1 : 0,
             }}
           />
         </div>
       </div>
+      <Footer
+        textColor={state.settings.theme.text}
+        text={state.text}
+        onClear={() => updateText("")}
+      />
     </div>
   );
 }

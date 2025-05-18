@@ -2,10 +2,15 @@ export interface WriterState {
   text: string;
   cursorPosition: number;
   settings: WriterSettings;
+  autocomplete: {
+    suggestions: string[];
+    activeIndex: number;
+    isVisible: boolean;
+    triggerWord: string;
+  };
 }
 
 export interface WriterSettings {
-  cursorSpeed: number;
   cursorWidth: number;
   theme: {
     background: string;
@@ -21,4 +26,5 @@ export interface WriterContextType {
   updateText: (text: string) => void;
   updateCursorPosition: (position: number) => void;
   updateSettings: (settings: Partial<WriterSettings>) => void;
+  updateAutocomplete: (updates: Partial<WriterState["autocomplete"]>) => void;
 }

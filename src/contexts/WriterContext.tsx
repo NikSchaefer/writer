@@ -35,7 +35,6 @@ const initialState: WriterState = {
   text: getInitialText(),
   cursorPosition: 0,
   settings: {
-    cursorSpeed: 0.1, // Faster, more responsive cursor movement
     cursorWidth: 2, // Thicker cursor for better visibility
     theme: lightTheme,
     fontSize: 18, // Optimal reading size
