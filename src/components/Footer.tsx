@@ -7,7 +7,16 @@ import {
   TooltipTrigger,
 } from "./ui/tooltip";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { Maximize2, Info, Copy, Check, Trash2 } from "lucide-react";
+import {
+  Maximize2,
+  Info,
+  Copy,
+  Check,
+  Trash2,
+  Lightbulb,
+  LightbulbOff,
+} from "lucide-react";
+import { useWriter } from "@/contexts/WriterContext";
 
 interface FooterProps {
   textColor: string;
@@ -20,6 +29,7 @@ export function Footer({ textColor, text, onClear }: FooterProps) {
   const [showCopySuccess, setShowCopySuccess] = useState(false);
   const footerTimeoutRef = useRef<NodeJS.Timeout>(null);
   const copyTimeoutRef = useRef<NodeJS.Timeout>(null);
+  const { state, toggleZenMode } = useWriter();
 
   const wordCount = text.trim().split(/\s+/).length;
   const readingTime = Math.ceil(wordCount / 200);
@@ -145,6 +155,26 @@ export function Footer({ textColor, text, onClear }: FooterProps) {
             </div>
           </PopoverContent>
         </Popover>
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleZenMode}
+              className="h-6 w-6"
+            >
+              {state.settings.isZenMode ? (
+                <Lightbulb className="h-3 w-3" />
+              ) : (
+                <LightbulbOff className="h-3 w-3" />
+              )}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{state.settings.isZenMode ? "Exit Focus Mode" : "Focus Mode"}</p>
+          </TooltipContent>
+        </Tooltip>
 
         <Tooltip>
           <TooltipTrigger asChild>

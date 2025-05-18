@@ -129,3 +129,30 @@ body {
     @apply bg-background text-foreground;
   }
 }
+.zen-mode {
+  position: relative;
+}
+
+.zen-mode::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background: transparent;
+  z-index: 1;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    black 20%,
+    black 80%,
+    transparent 100%
+  );
+  mask-size: 100% 200%;
+  mask-position: 0 calc(var(--cursor-line) * -100%);
+  mask-repeat: no-repeat;
+}
+
+/* Remove the previous paragraph-specific styles */

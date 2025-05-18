@@ -1,85 +1,25 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { useWriter } from "@/contexts/WriterContext";
+import { TAB_SIZE, useWriter, WriterProvider } from "@/contexts/WriterContext";
 import { Textarea } from "./ui/textarea";
 import { Footer } from "./Footer";
+import { ZenModeMask } from "./ZenModeMask";
+import { Cursor } from "./Cursor";
+import { useCursorPosition } from "@/hooks/useCursorPosition";
 
-export function Writer() {
+function WriterContent() {
   const { state, updateText } = useWriter();
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const [cursorLeft, setCursorLeft] = useState(0);
-  const [cursorTop, setCursorTop] = useState(0);
   const [isFocused, setIsFocused] = useState(false);
+  const { cursorLeft, cursorTop, updateCursorPosition } = useCursorPosition();
+
+  const { isZenMode } = state.settings;
 
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newText = e.target.value;
     updateText(newText);
     updateCursorPosition(e.target);
-  };
-
-  const updateCursorPosition = (textarea: HTMLTextAreaElement) => {
-    const text = textarea.value;
-    const cursorPos = textarea.selectionStart;
-
-    // Get the text up to the cursor position
-    const textBeforeCursor = text.substring(0, cursorPos);
-
-    // Split the text into lines
-    const lines = textBeforeCursor.split("\n");
-    const currentLine = lines[lines.length - 1];
-
-    // Create a temporary div to measure text width with wrapping
-    const div = document.createElement("div");
-    div.style.visibility = "hidden";
-    div.style.position = "absolute";
-    div.style.width = `${textarea.clientWidth}px`;
-    div.style.fontSize = `${state.settings.fontSize}px`;
-    div.style.fontFamily = window.getComputedStyle(textarea).fontFamily;
-    div.style.whiteSpace = "pre-wrap";
-    div.style.wordWrap = "break-word";
-    div.textContent = currentLine;
-
-    document.body.appendChild(div);
-
-    // Get all line rectangles
-    const range = document.createRange();
-    range.selectNodeContents(div);
-    const rects = range.getClientRects();
-    const lastRect = rects[rects.length - 1];
-    const width = lastRect ? lastRect.width : 0;
-
-    document.body.removeChild(div);
-
-    // Create a mirror div to measure total height
-    const mirror = document.createElement("div");
-    mirror.style.cssText = `
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: ${textarea.clientWidth}px;
-      height: auto;
-      font-size: ${state.settings.fontSize}px;
-      font-family: ${window.getComputedStyle(textarea).fontFamily};
-      line-height: ${state.settings.lineHeight};
-      white-space: pre-wrap;
-      word-wrap: break-word;
-      visibility: hidden;
-    `;
-    mirror.textContent = textBeforeCursor;
-    document.body.appendChild(mirror);
-
-    // Get the total height of text before cursor
-    const totalHeight = mirror.clientHeight;
-    document.body.removeChild(mirror);
-
-    // Calculate top position
-    const lineHeight = state.settings.fontSize * state.settings.lineHeight;
-    const top =
-      totalHeight - (currentLine ? lineHeight : 0) + textarea.scrollTop;
-
-    setCursorLeft(width);
-    setCursorTop(top);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -96,7 +36,7 @@ export function Writer() {
       if (start !== end) {
         const selectedText = value.substring(start, end);
         const lines = selectedText.split("\n");
-        const indentedText = lines.map((line) => "  " + line).join("\n");
+        const indentedText = lines.map((line) => "    " + line).join("\n");
         const newValue =
           value.substring(0, start) + indentedText + value.substring(end);
         updateText(newValue);
@@ -108,15 +48,15 @@ export function Writer() {
           updateCursorPosition(textarea);
         }, 0);
       } else {
-        // If no selection, just insert two spaces at cursor position
+        // If no selection, just insert four spaces at cursor position
         const newValue =
-          value.substring(0, start) + "  " + value.substring(end);
+          value.substring(0, start) + "    " + value.substring(end);
         updateText(newValue);
 
         // Set cursor position after the inserted spaces
         setTimeout(() => {
-          textarea.selectionStart = start + 2;
-          textarea.selectionEnd = start + 2;
+          textarea.selectionStart = start + TAB_SIZE + 1;
+          textarea.selectionEnd = start + TAB_SIZE + 1;
           updateCursorPosition(textarea);
         }, 0);
       }
@@ -156,38 +96,50 @@ export function Writer() {
     >
       <div className="max-w-3xl mx-auto">
         <div className="relative">
-          <Textarea
-            autoResize
-            ref={inputRef}
-            value={state.text}
-            onChange={handleInput}
-            onKeyDown={handleKeyDown}
-            onClick={handleClick}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            className="w-full font-text bg-transparent resize-none outline-none border-none shadow-none p-0 m-0 ring-0"
-            style={{
-              color: state.settings.theme.text,
-              fontSize: `${state.settings.fontSize}px`,
-              lineHeight: state.settings.lineHeight,
-              caretColor: "transparent",
-              whiteSpace: "pre-wrap",
-              minHeight: "60vh",
-            }}
-            placeholder="Write..."
-          />
-          <div
-            className="absolute w-0.5 animate-pulse"
-            style={{
-              backgroundColor: state.settings.theme.cursor,
-              height: `${state.settings.fontSize * 1.5}px`,
-              width: `${state.settings.cursorWidth}px`,
-              left: `${cursorLeft}px`,
-              top: `${cursorTop}px`,
-              transition: `left 0.15s ease-out, top 0.15s ease-out, opacity 0.15s ease-out`,
-              pointerEvents: "none",
-              opacity: isFocused ? 1 : 0,
-            }}
+          <div className="relative">
+            <Textarea
+              autoResize
+              ref={inputRef}
+              value={state.text}
+              onChange={handleInput}
+              onKeyDown={handleKeyDown}
+              onClick={handleClick}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              className="w-full font-text bg-transparent resize-none outline-none border-none shadow-none p-0 m-0 ring-0"
+              style={{
+                color: state.settings.theme.text,
+                fontSize: `${state.settings.fontSize}px`,
+                lineHeight: state.settings.lineHeight,
+                caretColor: "transparent",
+                whiteSpace: "pre-wrap",
+                minHeight: "60vh",
+                opacity: isZenMode ? 0.1 : 1,
+              }}
+              placeholder="Write..."
+            />
+            {isZenMode && (
+              <ZenModeMask
+                text={state.text}
+                cursorTop={cursorTop}
+                fontSize={state.settings.fontSize}
+                lineHeight={state.settings.lineHeight}
+                textColor={state.settings.theme.text}
+                onInput={handleInput}
+                onKeyDown={handleKeyDown}
+                onClick={handleClick}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+              />
+            )}
+          </div>
+          <Cursor
+            left={cursorLeft}
+            top={cursorTop}
+            fontSize={state.settings.fontSize}
+            width={state.settings.cursorWidth}
+            color={state.settings.theme.cursor}
+            isVisible={isFocused}
           />
         </div>
       </div>
@@ -197,5 +149,13 @@ export function Writer() {
         onClear={() => updateText("")}
       />
     </div>
+  );
+}
+
+export function Writer() {
+  return (
+    <WriterProvider>
+      <WriterContent />
+    </WriterProvider>
   );
 }

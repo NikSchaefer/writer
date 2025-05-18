@@ -10,6 +10,7 @@ import {
 import { WriterState, WriterContextType, WriterSettings } from "@/types/writer";
 
 const STORAGE_KEY = "writer-content";
+const SETTINGS_KEY = "writer-settings";
 
 const lightTheme = {
   background: "#fafafa",
@@ -23,41 +24,77 @@ const darkTheme = {
   cursor: "#e5e5e5",
 };
 
-// Load initial text from localStorage if available
-const getInitialText = (): string => {
-  if (typeof window !== "undefined") {
-    return localStorage.getItem(STORAGE_KEY) || "";
-  }
-  return "";
-};
+export const TAB_SIZE = 4;
 
-const initialState: WriterState = {
-  text: getInitialText(),
-  cursorPosition: 0,
-  settings: {
-    cursorWidth: 2, // Thicker cursor for better visibility
-    theme: lightTheme,
-    fontSize: 18, // Optimal reading size
-    lineHeight: 1.8, // Comfortable line spacing for readability
-  },
+// Load initial text and settings from localStorage if available
+const getInitialState = (): WriterState => {
+  // Always start with the default state
+  const defaultState: WriterState = {
+    text: "",
+    settings: {
+      cursorWidth: 2,
+      theme: lightTheme,
+      fontSize: 18,
+      lineHeight: 1.8,
+      isMuted: false,
+      isZenMode: false,
+    },
+  };
+
+  // Only try to load from localStorage on the client side
+  if (typeof window === "undefined") {
+    return defaultState;
+  }
+
+  const savedText = localStorage.getItem(STORAGE_KEY) || "";
+  const savedSettings = localStorage.getItem(SETTINGS_KEY);
+
+  if (savedSettings) {
+    try {
+      const parsedSettings = JSON.parse(savedSettings);
+      return {
+        text: savedText,
+        settings: {
+          ...defaultState.settings,
+          ...parsedSettings,
+        },
+      };
+    } catch (e) {
+      console.error("Failed to parse saved settings:", e);
+    }
+  }
+
+  return {
+    text: savedText,
+    settings: defaultState.settings,
+  };
 };
 
 type WriterAction =
   | { type: "UPDATE_TEXT"; payload: string }
-  | { type: "UPDATE_CURSOR"; payload: number }
-  | { type: "UPDATE_SETTINGS"; payload: Partial<WriterSettings> };
+  | { type: "UPDATE_SETTINGS"; payload: Partial<WriterSettings> }
+  | { type: "TOGGLE_ZEN_MODE" }
+  | { type: "LOAD_SAVED_STATE"; payload: WriterState };
 
 function writerReducer(state: WriterState, action: WriterAction): WriterState {
   switch (action.type) {
     case "UPDATE_TEXT":
       return { ...state, text: action.payload };
-    case "UPDATE_CURSOR":
-      return { ...state, cursorPosition: action.payload };
     case "UPDATE_SETTINGS":
       return {
         ...state,
         settings: { ...state.settings, ...action.payload },
       };
+    case "TOGGLE_ZEN_MODE":
+      return {
+        ...state,
+        settings: {
+          ...state.settings,
+          isZenMode: !state.settings.isZenMode,
+        },
+      };
+    case "LOAD_SAVED_STATE":
+      return action.payload;
     default:
       return state;
   }
@@ -66,7 +103,34 @@ function writerReducer(state: WriterState, action: WriterAction): WriterState {
 const WriterContext = createContext<WriterContextType | undefined>(undefined);
 
 export function WriterProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(writerReducer, initialState);
+  const [state, dispatch] = useReducer(writerReducer, getInitialState());
+
+  // Load saved state from localStorage after initial render
+  useEffect(() => {
+    const savedText = localStorage.getItem(STORAGE_KEY) || "";
+    const savedSettings = localStorage.getItem(SETTINGS_KEY);
+
+    if (savedSettings) {
+      try {
+        const parsedSettings = JSON.parse(savedSettings);
+        dispatch({
+          type: "LOAD_SAVED_STATE",
+          payload: {
+            text: savedText,
+            settings: {
+              ...state.settings,
+              ...parsedSettings,
+            },
+          },
+        });
+      } catch (e) {
+        console.error("Failed to parse saved settings:", e);
+      }
+    } else if (savedText) {
+      // If only text is saved, update just the text
+      dispatch({ type: "UPDATE_TEXT", payload: savedText });
+    }
+  }, []);
 
   // Save text to localStorage whenever it changes
   useEffect(() => {
@@ -74,6 +138,13 @@ export function WriterProvider({ children }: { children: ReactNode }) {
       localStorage.setItem(STORAGE_KEY, state.text);
     }
   }, [state.text]);
+
+  // Save settings to localStorage whenever they change
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(state.settings));
+    }
+  }, [state.settings]);
 
   useEffect(() => {
     // Check system theme preference
@@ -103,12 +174,12 @@ export function WriterProvider({ children }: { children: ReactNode }) {
     dispatch({ type: "UPDATE_TEXT", payload: text });
   };
 
-  const updateCursorPosition = (position: number) => {
-    dispatch({ type: "UPDATE_CURSOR", payload: position });
-  };
-
   const updateSettings = (settings: Partial<WriterSettings>) => {
     dispatch({ type: "UPDATE_SETTINGS", payload: settings });
+  };
+
+  const toggleZenMode = () => {
+    dispatch({ type: "TOGGLE_ZEN_MODE" });
   };
 
   return (
@@ -116,8 +187,8 @@ export function WriterProvider({ children }: { children: ReactNode }) {
       value={{
         state,
         updateText,
-        updateCursorPosition,
         updateSettings,
+        toggleZenMode,
       }}
     >
       {children}

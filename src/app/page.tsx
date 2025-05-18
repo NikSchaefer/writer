@@ -1,12 +1,14 @@
 "use client";
 
-import { WriterProvider } from "@/contexts/WriterContext";
-import { Writer } from "@/components/Writer";
+import dynamic from "next/dynamic";
+
+const Writer = dynamic(
+  () => import("@/components/Writer").then((mod) => mod.Writer),
+  {
+    ssr: false,
+  }
+);
 
 export default function Home() {
-  return (
-    <WriterProvider>
-      <Writer />
-    </WriterProvider>
-  );
+  return <Writer />;
 }
