@@ -9,6 +9,7 @@ export interface WriterSettings {
     background: string;
     text: string;
     cursor: string;
+    gradient: string;
   };
   fontSize: number;
   lineHeight: number;

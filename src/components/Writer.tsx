@@ -92,8 +92,11 @@ function WriterContent() {
   return (
     <div
       className="min-h-screen p-8"
-      style={{ backgroundColor: state.settings.theme.background }}
+      style={{
+        backgroundColor: state.settings.theme.background,
+      }}
     >
+      <div className="radial inset-0 w-screen h-screen absolute z-10 pointer-events-none" />
       <div className="max-w-3xl mx-auto">
         <div className="relative">
           <div className="relative">

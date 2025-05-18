@@ -1,5 +1,4 @@
 import { Textarea } from "./ui/textarea";
-import { WriterSettings } from "@/contexts/WriterContext";
 
 interface ZenModeMaskProps {
   text: string;

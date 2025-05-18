@@ -16,12 +16,16 @@ const lightTheme = {
   background: "#fafafa",
   text: "#2d2d2d",
   cursor: "#2d2d2d",
+  gradient:
+    "radial-gradient(circle at center, #fafafa 0%, #fafafa 50%, rgba(96, 165, 250, 0.03) 75%, rgba(37, 99, 235, 0.04) 100%)",
 };
 
 const darkTheme = {
   background: "#1a1a1a",
   text: "#e5e5e5",
   cursor: "#e5e5e5",
+  gradient:
+    "radial-gradient(circle at center, #1a1a1a 0%, #1a1a1a 50%, rgba(236, 72, 153, 0.03) 75%, rgba(219, 39, 119, 0.04) 100%)",
 };
 
 export const TAB_SIZE = 4;

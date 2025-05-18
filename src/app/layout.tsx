@@ -13,7 +13,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${sohne.variable} antialiased`}>
-      <body className={sohne.className}>{children}</body>
+      <body className={`${sohne.className}`}>{children}</body>
     </html>
   );
 }
