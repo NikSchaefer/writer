@@ -6,7 +6,6 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sohne: var(--font-sohne);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -83,7 +82,7 @@
     position: absolute;
     content: "";
     z-index: -1;
-    @apply w-full h-full left-0 top-0 opacity-5;
+    @apply w-full h-full left-0 top-0 opacity-20;
     filter: blur(150px) saturate(100%);
     transform: translateZ(0);
   }
