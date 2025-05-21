@@ -84,7 +84,7 @@ export function ZenModeMask({
           whiteSpace: "pre-wrap",
           minHeight: "60vh",
         }}
-        placeholder="Write..."
+        placeholder="Write something interesting..."
       />
     </div>
   );

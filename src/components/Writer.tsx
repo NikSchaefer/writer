@@ -91,15 +91,15 @@ function WriterContent() {
 
   return (
     <div
-      className="min-h-screen p-8"
+      className="min-h-screen overflow-y-auto"
       style={{
         backgroundColor: state.settings.theme.background,
       }}
     >
       <div className="radial inset-0 w-screen h-screen absolute z-10 pointer-events-none" />
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-3xl mx-auto p-8">
         <div className="relative">
-          <div className="relative">
+          <div className="relative pb-[90vh]">
             <Textarea
               autoResize
               ref={inputRef}
@@ -119,7 +119,7 @@ function WriterContent() {
                 minHeight: "60vh",
                 opacity: isZenMode ? 0.1 : 1,
               }}
-              placeholder="Write..."
+              placeholder="Write something interesting..."
             />
             {isZenMode && (
               <ZenModeMask

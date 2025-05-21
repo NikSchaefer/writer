@@ -37,6 +37,10 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
       (textarea: HTMLTextAreaElement) => {
         if (!textarea) return;
 
+        // Store the current selection
+        const selectionStart = textarea.selectionStart;
+        const selectionEnd = textarea.selectionEnd;
+
         // Reset height to get the correct scrollHeight
         textarea.style.height = "0px";
         textarea.style.height = "auto";
@@ -58,6 +62,9 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         );
 
         textarea.style.height = `${newHeight}px`;
+
+        // Restore the selection
+        textarea.setSelectionRange(selectionStart, selectionEnd);
       },
       [maxRows]
     );
