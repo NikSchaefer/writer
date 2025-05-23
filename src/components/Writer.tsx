@@ -91,12 +91,12 @@ function WriterContent() {
 
   return (
     <div
-      className="min-h-screen overflow-y-auto"
+      className="min-h-screen overflow-y-auto relative"
       style={{
         backgroundColor: state.settings.theme.background,
       }}
     >
-      <div className="radial inset-0 w-screen h-screen absolute z-10 pointer-events-none" />
+      <div className="radial fixed inset-0 w-full h-full z-10 pointer-events-none" />
       <div className="max-w-3xl mx-auto p-8">
         <div className="relative">
           <div className="relative pb-[90vh]">
