@@ -11,7 +11,6 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import {
   Maximize2,
-  Info,
   Copy,
   Check,
   Trash2,
@@ -31,9 +30,6 @@ export function Footer() {
   const [showAISettings, setShowAISettings] = useState(false);
   const footerTimeoutRef = useRef<NodeJS.Timeout>(null);
   const copyTimeoutRef = useRef<NodeJS.Timeout>(null);
-
-  const wordCount = text.trim().split(/\s+/).length;
-  const readingTime = Math.ceil(wordCount / 200);
 
   const handleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -132,46 +128,6 @@ export function Footer() {
             <p>Fullscreen</p>
           </TooltipContent>
         </Tooltip>
-
-        <Popover>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <PopoverTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-6 w-6">
-                  <Info className="h-3 w-3" />
-                </Button>
-              </PopoverTrigger>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Info</p>
-            </TooltipContent>
-          </Tooltip>
-          <PopoverContent className="w-56 p-2">
-            <div className="space-y-2 text-xs">
-              <div className="flex justify-between">
-                <span>Words:</span>
-                <span>{wordCount}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Characters:</span>
-                <span>{text.replace(/\s/g, "").length}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Paragraphs:</span>
-                <span>
-                  {
-                    text.split(/\n\s*\n/).filter((p) => p.trim().length > 0)
-                      .length
-                  }
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span>Time:</span>
-                <span>{readingTime}m</span>
-              </div>
-            </div>
-          </PopoverContent>
-        </Popover>
 
         <Tooltip>
           <TooltipTrigger asChild>
