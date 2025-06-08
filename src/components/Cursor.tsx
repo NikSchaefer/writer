@@ -17,14 +17,14 @@ export function Cursor({
 }: CursorProps) {
   return (
     <div
-      className="absolute w-0.5 animate-pulse"
+      className="absolute w-0.5"
       style={{
         backgroundColor: color,
         height: `${fontSize * 1.5}px`,
         width: `${width}px`,
         left: `${left}px`,
         top: `${top}px`,
-        transition: `left 0.15s ease-out, top 0.15s ease-out, opacity 0.15s ease-out`,
+        transition: `left 0.2s ease-out, top 0.2s ease-out, opacity 0.2s ease-out`,
         pointerEvents: "none",
         opacity: isVisible ? 1 : 0,
       }}
