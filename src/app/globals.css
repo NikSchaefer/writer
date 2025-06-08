@@ -20,6 +20,10 @@
   --color-primary: var(--primary);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
+  --color-writer-background: var(--writer-background);
+  --color-writer-text: var(--writer-text);
+  --color-writer-cursor: var(--writer-cursor);
+  --color-writer-gradient: var(--writer-gradient);
 }
 
 :root {
@@ -39,6 +43,18 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
+
+  /* Writer theme variables */
+  --writer-background: #fafafa;
+  --writer-text: #2d2d2d;
+  --writer-cursor: #2d2d2d;
+  --writer-gradient: radial-gradient(
+    circle at center,
+    #fafafa 0%,
+    #fafafa 50%,
+    rgba(96, 165, 250, 0.03) 75%,
+    rgba(37, 99, 235, 0.04) 100%
+  );
 }
 
 .dark {
@@ -58,6 +74,18 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
+
+  /* Writer theme variables */
+  --writer-background: #1a1a1a;
+  --writer-text: #e5e5e5;
+  --writer-cursor: #e5e5e5;
+  --writer-gradient: radial-gradient(
+    circle at center,
+    #1a1a1a 0%,
+    #1a1a1a 50%,
+    rgba(236, 72, 153, 0.03) 75%,
+    rgba(219, 39, 119, 0.04) 100%
+  );
 }
 
 @layer base {

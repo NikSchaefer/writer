@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { TAB_SIZE } from "@/contexts/WriterContext";
+import { TAB_SIZE } from "@/config";
 
 export function useCursorPosition() {
   const [cursorLeft, setCursorLeft] = useState(0);
