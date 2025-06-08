@@ -56,7 +56,7 @@ export function useCompletion({
     // Wait 1.5 seconds before showing completion
     completionTimeoutRef.current = setTimeout(async () => {
       setIsCompleting(true);
-      const completion = await getCompletion(text);
+      const completion = await getCompletion(wrapWithPrompts(text));
       setIsCompleting(false);
 
       if (completion) {
@@ -122,8 +122,9 @@ export function useCompletion({
 
 function wrapWithPrompts(text: string) {
   return `
-  :
+Continue the following text naturally. Often 3-8 words, matching the user's writing style and tone and pay special attention to the spacing.
 
-  ${text}
-  `;
+Current text: ${text}
+
+Provide only the completion text, no explanation.`;
 }
