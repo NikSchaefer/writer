@@ -72,5 +72,6 @@ export function useTextEditor() {
     handleIndentation,
     handleArrowKeys,
     handleClick,
+    updateCursorPosition,
   };
 }

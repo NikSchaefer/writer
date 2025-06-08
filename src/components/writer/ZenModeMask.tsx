@@ -72,6 +72,7 @@ export function ZenModeMask({
         onBlur={onBlur}
         className="w-full text-writer-text font-text bg-transparent resize-none outline-none border-none shadow-none p-0 m-0 ring-0 absolute inset-0"
         style={{
+          color: "var(--writer-text)",
           fontSize: `${FONT_SIZE}px`,
           lineHeight: LINE_HEIGHT,
           caretColor: "transparent",

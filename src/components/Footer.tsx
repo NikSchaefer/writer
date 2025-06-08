@@ -202,50 +202,63 @@ export function Footer() {
           <Tooltip>
             <TooltipTrigger asChild>
               <PopoverTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6"
-                  onClick={toggleAIEnabled}
-                >
-                  <div className="relative">
-                    <Sparkles className="h-3 w-3" />
-                    {!settings.isAIEnabled && (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-full h-[2px] bg-current rotate-45" />
-                      </div>
-                    )}
-                  </div>
+                <Button variant="ghost" size="icon" className="h-6 w-6">
+                  <Sparkles className="h-3 w-3" />
                 </Button>
               </PopoverTrigger>
             </TooltipTrigger>
             <TooltipContent>
-              <p>AI</p>
+              <p>AI Settings</p>
             </TooltipContent>
           </Tooltip>
           <PopoverContent className="w-80 p-4">
             <div className="space-y-4">
-              <div className="space-y-2">
-                <Input
-                  id="api-key"
-                  value={settings.aiAPIKey}
-                  onChange={handleAPIKeyChange}
-                  placeholder="Enter your Gemini API key"
-                  className="w-full"
-                />
-              </div>
-              <div className="text-xs flex items-center text-muted-foreground">
-                <p>Get your API key from: </p>{" "}
-                <a
-                  href="https://aistudio.google.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
+              <div className="flex items-center justify-between">
+                <label htmlFor="ai-enabled" className="text-sm font-medium">
+                  Enable AI
+                </label>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={toggleAIEnabled}
+                  className="h-8 w-8 p-0"
                 >
-                  {" "}
-                  aistudio.google.com
-                </a>
+                  {settings.isAIEnabled ? (
+                    <Sparkles className="h-4 w-4" />
+                  ) : (
+                    <div className="relative">
+                      <Sparkles className="h-4 w-4 opacity-50" />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-full h-[2px] bg-current rotate-45" />
+                      </div>
+                    </div>
+                  )}
+                </Button>
               </div>
+              {settings.isAIEnabled && (
+                <div className="space-y-2">
+                  <Input
+                    id="api-key"
+                    value={settings.aiAPIKey}
+                    onChange={handleAPIKeyChange}
+                    placeholder="Enter your API key here"
+                    className="w-full"
+                  />
+                  <div className="text-xs flex items-center text-muted-foreground">
+                    <p>
+                      Get it here:{" "}
+                      <a
+                        href="https://aistudio.google.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        aistudio.google.com
+                      </a>
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </PopoverContent>
         </Popover>

@@ -40,7 +40,7 @@
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
+  --border: #f1f5f9;
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
 
@@ -110,7 +110,7 @@
     position: absolute;
     content: "";
     z-index: -1;
-    @apply w-full h-full left-0 top-0 opacity-20;
+    @apply w-full h-full left-0 top-0 opacity-10;
     filter: blur(150px) saturate(100%);
     transform: translateZ(0);
   }

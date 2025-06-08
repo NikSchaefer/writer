@@ -72,13 +72,17 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     // Auto-resize when value changes
     useEffect(() => {
       if (autoResize && textAreaRef.current) {
-        resizeTextarea(textAreaRef.current);
+        requestAnimationFrame(() => {
+          resizeTextarea(textAreaRef.current!);
+        });
       }
     }, [value, autoResize, resizeTextarea]);
 
     const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
       if (autoResize) {
-        resizeTextarea(e.target);
+        requestAnimationFrame(() => {
+          resizeTextarea(e.target);
+        });
       }
 
       // Forward the onChange event
