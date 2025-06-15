@@ -203,7 +203,16 @@ export function Footer() {
             <TooltipTrigger asChild>
               <PopoverTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-6 w-6">
-                  <Sparkles className="h-3 w-3" />
+                  {settings.isAIEnabled ? (
+                    <Sparkles className="h-3 w-3" />
+                  ) : (
+                    <div className="relative">
+                      <Sparkles className="h-3 w-3 opacity-50" />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-full h-[2px] bg-current rotate-45" />
+                      </div>
+                    </div>
+                  )}
                 </Button>
               </PopoverTrigger>
             </TooltipTrigger>
@@ -218,21 +227,12 @@ export function Footer() {
                   Enable AI
                 </label>
                 <Button
-                  variant="ghost"
+                  variant={settings.isAIEnabled ? "default" : "outline"}
                   size="sm"
                   onClick={toggleAIEnabled}
-                  className="h-8 w-8 p-0"
+                  className="h-8 px-3"
                 >
-                  {settings.isAIEnabled ? (
-                    <Sparkles className="h-4 w-4" />
-                  ) : (
-                    <div className="relative">
-                      <Sparkles className="h-4 w-4 opacity-50" />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-full h-[2px] bg-current rotate-45" />
-                      </div>
-                    </div>
-                  )}
+                  {settings.isAIEnabled ? "Enabled" : "Disabled"}
                 </Button>
               </div>
               {settings.isAIEnabled && (
